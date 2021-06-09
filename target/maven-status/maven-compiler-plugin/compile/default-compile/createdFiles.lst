@@ -1,0 +1,7 @@
+connector\HttpConnectorImpl.class
+util\Logging$1.class
+config\Module.class
+service\Client.class
+config\InjectionContext.class
+util\Logging.class
+connector\HttpConnector.class
