@@ -1,39 +1,46 @@
 package service;
 
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestFactory;
-import com.google.api.client.http.HttpResponseException;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import org.junit.jupiter.api.BeforeEach;
+import connector.CatsHttpConnector;
+import inject.InjectionContext;
+import models.Facts;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import util.Logging;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.IOException;
-
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
+
+@ExtendWith(MockitoExtension.class)
 public class ClientTest {
+
+    @Mock
+    private CatsHttpConnector catsConnector;
+
+    @InjectMocks
+    private ClientServiceImpl service;
+
+    private static Facts[] factsArray;
+
+    @BeforeAll
+    static void setup() {
+        Facts[] factsArr = new Facts[1];
+        Facts testFacts = new Facts();
+        testFacts.setText("test text");
+        factsArr[0] = testFacts;
+        factsArray = factsArr;
+    }
 
     @Test
     public void sanityTest() {
-        Logging.enableLogging();
-
-        HttpRequestFactory requestFactory
-                = new NetHttpTransport().createRequestFactory();
-        try {
-            HttpRequest request = requestFactory.buildGetRequest(
-                    new GenericUrl("https://github.com"));
-            String rawResponse = request.execute().parseAsString();
-
-        } catch (HttpResponseException e) {
-            System.err.println(e.getStatusMessage());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        assertNotNull(catsConnector);
+        assertNotNull(service);
+        when(catsConnector.fetchCatFacts(Mockito.anyString(), Mockito.anyInt())).thenReturn(factsArray);
+        service.validate();
     }
+
 }
